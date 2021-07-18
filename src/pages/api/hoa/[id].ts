@@ -8,7 +8,6 @@ const HoaDetail = async (req: NextApiRequest, res: NextApiResponse<IApiResult<IH
         try {
             const id = req.query.id;
             const _hoa = await Hoa.findById(id);
-
             if (_hoa) {
                 res.send({
                     message: 'Hoa nè',

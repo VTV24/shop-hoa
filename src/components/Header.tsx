@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { signIn, signOut, useSession } from 'next-auth/client';
 import { IconButton, Image as Avatar, Input, InputGroup, InputLeftAddon, InputRightAddon } from '@chakra-ui/react';
 import { useLayoutContext } from '~src/layout/PageLayout';
+import { useCartContext } from '~src/providers/cartProvider';
 const Header: FC = () => {
     const [session] = useSession();
     const { search, setSearch } = useLayoutContext();
     const searchRef = useRef<HTMLInputElement>(null);
+    const { carts } = useCartContext();
 
     return (
         <header className="flex items-center w-full h-14 fixed top-0 left-0 bg-white shadow px-16 py-2 z-10">
@@ -34,7 +36,7 @@ const Header: FC = () => {
                                     }}
                                     defaultValue={search}
                                     ref={searchRef}
-                                    placeholder="Nhập tên hoa cần tìm"
+                                    placeholder="Nhập tên hoa, mô tả cần tìm"
                                 ></Input>
                                 <InputRightAddon
                                     onClick={(e) => {
@@ -57,6 +59,22 @@ const Header: FC = () => {
                             <a>Danh sách hoa</a>
                         </Link>
                     </li>
+
+                    {session?.user && (
+                        <li className="cursor-pointer flex gap-1 hover:text-blue-800">
+                            <Link href="/cart">
+                                <a>Giỏ hàng</a>
+                            </Link>
+                            {carts.length > 0 && (
+                                <div
+                                    style={{ minWidth: '1rem' }}
+                                    className="h-4 p-1 rounded-full bg-red-600 flex justify-center items-center"
+                                >
+                                    <p className="text-xs font-medium text-white">{carts.length}</p>
+                                </div>
+                            )}
+                        </li>
+                    )}
 
                     {session?.user?.isAdmin && (
                         <li className="cursor-pointer hover:text-blue-800">

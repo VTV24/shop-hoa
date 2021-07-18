@@ -10,6 +10,7 @@ import { useState } from 'react';
 import routers from '~src/routerConfig';
 import { removeUserId, setUserId } from '~src/services/instance';
 import Head from 'next/head';
+import CartProvider from '~src/providers/cartProvider';
 
 type IPageLayoutContext = {
     setLoading: Dispatch<SetStateAction<boolean>>;
@@ -34,9 +35,15 @@ const PageLayout: FC = ({ children }) => {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
+        console.log(router.pathname);
+
         setCurrentRouter(routers.find((r) => r.path == router.pathname) || routers[0]);
         window.scrollTo(0, 0);
     }, [router.pathname]);
+
+    useEffect(() => {
+        console.log(currentRouter);
+    }, [currentRouter]);
 
     if (loading)
         return (
@@ -52,7 +59,10 @@ const PageLayout: FC = ({ children }) => {
         removeUserId();
     }
 
-    if (currentRouter.role && (!session || (session.expires && new Date(session.expires) <= new Date(Date.now())))) {
+    if (
+        currentRouter.role &&
+        (!session?.user?._id || (session.expires && new Date(session.expires) <= new Date(Date.now())))
+    ) {
         signIn();
         return (
             <div className="w-screen h-screen flex flex-col gap-4 justify-center items-center">
@@ -76,9 +86,11 @@ const PageLayout: FC = ({ children }) => {
             <Head>
                 <title>{currentRouter.name}</title>
             </Head>
-            <Header />
-            <section className="my-20 max-w-7xl mx-auto">{children}</section>
-            <Footer />
+            <CartProvider>
+                <Header />
+                <section className="my-20 max-w-7xl mx-auto">{children}</section>
+                <Footer />
+            </CartProvider>
         </pageLayoutContext.Provider>
     );
 };

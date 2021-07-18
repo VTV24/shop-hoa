@@ -5,7 +5,7 @@ class HoaApi {
         instance.get<IApiResult<IHoa[]>>('/api/hoa', {
             params: query,
         });
-    detail = () => instance.get<IApiResult<IHoa>>('/api/hoa/1');
+    detail = (id: string) => instance.get<IApiResult<IHoa>>(`/api/hoa/${id}`);
     post = (data: IHoa) => instance.post<IApiResult<IHoa>>('/api/hoa', data);
     put = (id: string, data: IHoa) => instance.put<IApiResult<IHoa>>(`/api/hoa/${id}`, data);
 }

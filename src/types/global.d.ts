@@ -13,3 +13,5 @@ type IQueryHoa = {
     gte?: number;
     lte?: number;
 };
+
+type ICart = { hoa: IHoa; quantity: number };

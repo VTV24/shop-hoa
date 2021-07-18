@@ -10,6 +10,7 @@ import Head from 'next/head';
 import '~styles/globals.scss';
 import 'tailwindcss/tailwind.css';
 import ToastProvider from '~src/providers/toasProvider';
+import CartProvider from '~src/providers/cartProvider';
 
 const App: FC<AppProps & { Component: { layout?: React.FC } }> = ({ Component, pageProps }) => {
     const Layout = Component.layout || NoneLayout;

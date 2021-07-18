@@ -1,4 +1,4 @@
-import { Box, Button, Select, Slider, SliderFilledTrack, SliderThumb, SliderTrack } from '@chakra-ui/react';
+import { Box, Button, Select, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Spinner } from '@chakra-ui/react';
 import { useRouter } from 'next/dist/client/router';
 import { NextPage } from 'next/types';
 import { default as React, Fragment, useEffect, useState } from 'react';
@@ -18,60 +18,68 @@ const Hoa: NextPage = () => {
 
     const [hoas, setHoas] = useState<IHoa[]>([]);
     const [loais, setLoais] = useState<ILoai[]>([]);
-    const { reset, register, handleSubmit, control, getValues, watch } = useForm<IQueryHoa>();
-    const { setLoading } = useLayoutContext();
+    const { reset, register, handleSubmit, control, getValues, watch, setValue } = useForm<IQueryHoa>();
     const toast = useToastContext();
+    const [load, setLoad] = useState(1);
 
     useEffect(() => {
-        load();
+        loadLoai();
     }, []);
 
     useEffect(() => {
-        const { sort, dsc, type } = router.query;
-        // @ts-ignore
-        reset({ sort: sort || 'name', dsc: dsc || false, gte: 0, lte: 10000000, type: type });
-    }, [loais]);
-
-    useEffect(() => {
-        handleSubmit(onFilter)();
+        if (search != '') {
+            handleSubmit((data) =>
+                onFilter({
+                    ...data,
+                    search: search,
+                }),
+            )();
+        } else {
+            const { sort, dsc, type } = router.query;
+            handleSubmit((data) =>
+                // @ts-ignore
+                onFilter({ ...data, sort: sort || 'name', dsc: dsc || false, gte: 0, lte: 10000000, type: type }),
+            )();
+            // @ts-ignore
+            reset({ sort: sort || 'name', dsc: dsc || false, gte: 0, lte: 10000000, type: type });
+        }
     }, [search]);
 
-    const load = async () => {
+    useEffect(() => {
+        const { type } = router.query;
+        // @ts-ignore
+        setValue('type', type);
+    }, [loais]);
+
+    const loadLoai = async () => {
         try {
-            setLoading(true);
-            const [loai, hoa] = await Promise.all([loaiApi.get(), hoaApi.get()]);
-            setLoais(loai.data.data || []);
-            setHoas(hoa.data.data || []);
+            const loai = (await loaiApi.get()).data.data;
+            setLoais(loai || []);
         } catch (err) {
             toast(err);
         } finally {
-            setLoading(false);
+            setLoad((l) => l - 1);
         }
     };
 
     const loadHoa = async (query: IQueryHoa) => {
         try {
-            setLoading(true);
+            setLoad((l) => l + 1);
             const hoa = await hoaApi.get(query);
             setHoas(hoa.data.data || []);
         } catch (err) {
             toast(err);
         } finally {
-            setLoading(false);
+            setLoad((l) => l - 1);
         }
     };
 
     const onFilter = (data: IQueryHoa) => {
-        const _query = data;
-        if (search && search != '') {
-            _query.search = search;
-        }
-
         loadHoa(data);
-        delete _query.gte;
-        delete _query.lte;
+        delete data.gte;
+        delete data.lte;
         router.push({
-            query: _query,
+            query: data,
         });
     };
 
@@ -168,8 +176,15 @@ const Hoa: NextPage = () => {
                     </div>
                 </form>
             </div>
-            <div className="flex flex-col gap-y-16 justify-center items-center flex-1">
-                {/* <p className="text-lg font-medium">Kết quả tiềm kiếm cho : ACB</p> */}
+            <div className="flex flex-col gap-y-4 justify-center items-center flex-1">
+                {load > 0 && <Spinner></Spinner>}
+                {load <= 0 && hoas.length == 0 && <p className="text-lg font-medium">Không tìm thấy hoa</p>}
+                {load <= 0 && hoas.length > 0 && search != '' && (
+                    <div className="flex w-full">
+                        <p className="text-lg text-left font-medium">Kết quả tiềm kiếm cho : {search}</p>
+                    </div>
+                )}
+
                 <FlowerCardContainer>
                     {hoas.map((hoa, index) => (
                         <FlowerCard

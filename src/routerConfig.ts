@@ -8,6 +8,12 @@ const routers: IRouter[] = [
         path: '/hoa',
     },
     {
+        name: 'Giỏ hàng',
+        path: '/cart',
+        role: ['admin', 'user'],
+        hidden: true,
+    },
+    {
         name: 'Quản lí',
         path: '/manage',
         role: ['admin'],
@@ -21,6 +27,11 @@ const routers: IRouter[] = [
     {
         name: 'Quản lí loại hoa',
         path: '/manage/loai',
+        role: ['admin'],
+    },
+    {
+        name: 'Quản lí đơn hàng',
+        path: '/manage/order',
         role: ['admin'],
     },
 ];
