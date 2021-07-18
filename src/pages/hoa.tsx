@@ -62,7 +62,7 @@ const Hoa: NextPage = () => {
     };
 
     const onFilter = (data: IQueryHoa) => {
-        let _query = data;
+        const _query = data;
         if (search && search != '') {
             _query.search = search;
         }

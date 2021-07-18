@@ -17,14 +17,12 @@ const Hoas = async (req: NextApiRequest, res: NextApiResponse<IApiResult<IHoa[]>
                 type = '',
                 search = '',
             } = req.query as IQueryHoa;
-            let _query = {};
+            const _query: FilterQuery<ILoai> = {};
             if (type != '') {
-                _query = {
-                    code: type,
-                };
+                _query.code = type;
             }
             const _loais: string[] = (await Loai.find(_query)).map((l) => l._id);
-            let _hoaQuery: FilterQuery<IHoa> = {
+            const _hoaQuery: FilterQuery<IHoa> = {
                 typeId: {
                     $in: _loais,
                 },
