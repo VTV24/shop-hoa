@@ -1,0 +1,22 @@
+@mixin scroll($color: #d7dee6) {
+    &::-webkit-scrollbar-track {
+        transition: all 0.3s;
+        background-color: transparent;
+        &:hover {
+            background-color: #f3f3f357;
+        }
+    }
+
+    &::-webkit-scrollbar {
+        width: 5px;
+        height: 1rem;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba($color: $color, $alpha: 0.7);
+        border-radius: 2px;
+        &:active {
+            background-color: rgba($color: $color, $alpha: 1);
+        }
+    }
+}
