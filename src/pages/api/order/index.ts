@@ -4,6 +4,7 @@ import Order from '~src/models/order';
 import { getSession } from 'next-auth/client';
 import nodemailer from 'nodemailer';
 import mail from '~src/utils/mail';
+import Hoa from '~src/models/hoa';
 
 const LoaiHoa = async (req: NextApiRequest, res: NextApiResponse<IApiResult<IOrder[]>>) => {
     await dbConnect();
@@ -28,6 +29,17 @@ const LoaiHoa = async (req: NextApiRequest, res: NextApiResponse<IApiResult<IOrd
                 const newOrder = await new Order(order).save();
 
                 const transporter = nodemailer.createTransport(process.env.MAIL_SERVER);
+
+                (async (order: IOrder) => {
+                    order.detail.forEach(async ({ hoa, quantity }) => {
+                        console.log(quantity);
+                        await Hoa.findByIdAndUpdate(hoa._id, {
+                            $inc: {
+                                count: quantity,
+                            },
+                        });
+                    });
+                })(order);
 
                 const mailInfo = await transporter.sendMail({
                     from: process.env.MAIL_FROM,

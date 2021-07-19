@@ -14,7 +14,9 @@ import loaiApi from '~src/services/loai';
 const Hoa: NextPage = () => {
     const router = useRouter();
 
-    const { search } = useLayoutContext();
+    const {
+        search: { value: search },
+    } = useLayoutContext();
 
     const [hoas, setHoas] = useState<IHoa[]>([]);
     const [loais, setLoais] = useState<ILoai[]>([]);
@@ -114,8 +116,8 @@ const Hoa: NextPage = () => {
                             </Select>
 
                             <Select {...register('dsc')}>
-                                <option value="true">Tăng dần</option>
-                                <option value="false">Giảm dần</option>
+                                <option value="false">Tăng dần</option>
+                                <option value="true">Giảm dần</option>
                             </Select>
 
                             <Button type="submit">Sắp xếp</Button>

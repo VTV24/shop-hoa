@@ -37,7 +37,7 @@ const Hoas = async (req: NextApiRequest, res: NextApiResponse<IApiResult<IHoa[]>
                 };
             }
 
-            const _hoas: IHoa[] = await Hoa.find(_hoaQuery).sort({ [sort as string]: dsc == 'false' ? -1 : 1 });
+            const _hoas: IHoa[] = await Hoa.find(_hoaQuery).sort({ [sort as string]: dsc == 'true' ? -1 : 1 });
             res.send({
                 message: 'Thành công',
                 data: _hoas,

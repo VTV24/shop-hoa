@@ -71,6 +71,7 @@ const CartPage: NextPage = () => {
                 description: res.message,
             });
             reset({});
+            onClose();
             clearCart();
         } catch (err) {
             toast(err);

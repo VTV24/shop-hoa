@@ -27,6 +27,14 @@ import { useToastContext } from '~src/providers/toasProvider';
 import { VndFormat } from '~src/services';
 import hoaApi from '~src/services/hoa';
 import loaiApi from '~src/services/loai';
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogContent,
+    AlertDialogOverlay,
+} from '@chakra-ui/react';
 
 const Hoa: NextPage = () => {
     const inputImage = useRef<any>(null);
@@ -45,6 +53,16 @@ const Hoa: NextPage = () => {
     });
 
     const { isOpen, onOpen, onClose } = useDisclosure({
+        onClose: () => {
+            reset({});
+        },
+    });
+
+    const {
+        isOpen: isOpenDelete,
+        onOpen: onOpenDelete,
+        onClose: onCloseDelete,
+    } = useDisclosure({
         onClose: () => {
             reset({});
         },
@@ -98,6 +116,20 @@ const Hoa: NextPage = () => {
         }
     };
 
+    const onDelete = async (data: IHoa) => {
+        try {
+            const res = (await hoaApi.delete(data._id)).data;
+            toast({
+                title: 'Xóa thành công',
+                description: res.message,
+            });
+            reset({});
+            setRefetch({});
+        } catch (err) {
+            toast(err);
+        }
+    };
+
     return (
         <ManageContainer>
             <div className="mb-4 flex flex-row-reverse">
@@ -139,6 +171,10 @@ const Hoa: NextPage = () => {
                                         }}
                                     />
                                     <IconButton
+                                        onClick={() => {
+                                            reset(hoa);
+                                            onOpenDelete();
+                                        }}
                                         colorScheme="red"
                                         aria-label=""
                                         icon={<i className="fas fa-trash"></i>}
@@ -149,6 +185,33 @@ const Hoa: NextPage = () => {
                     ))}
                 </tbody>
             </table>
+
+            <AlertDialog leastDestructiveRef={undefined} isOpen={isOpenDelete} onClose={onCloseDelete}>
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Nguy hiểm
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>Xóa hoa này chứ</AlertDialogBody>
+
+                        <AlertDialogFooter>
+                            <Button onClick={onCloseDelete}>Hủy</Button>
+                            <Button
+                                isLoading={isSubmitting}
+                                colorScheme="red"
+                                onClick={async () => {
+                                    await handleSubmit(onDelete)();
+                                    onCloseDelete();
+                                }}
+                                ml={3}
+                            >
+                                Xóa
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
             <Modal size="3xl" isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>

@@ -7,6 +7,7 @@ class HoaApi {
         });
     detail = (id: string) => instance.get<IApiResult<IHoa>>(`/api/hoa/${id}`);
     post = (data: IHoa) => instance.post<IApiResult<IHoa>>('/api/hoa', data);
+    delete = (id: string) => instance.delete<IApiResult>(`/api/hoa/${id}`);
     put = (id: string, data: IHoa) => instance.put<IApiResult<IHoa>>(`/api/hoa/${id}`, data);
 }
 

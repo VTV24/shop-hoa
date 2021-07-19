@@ -7,7 +7,7 @@ type IRouter = {
 
 type IQueryHoa = {
     sort?: keyof IHoa;
-    dsc?: boolean;
+    dsc?: string;
     search?: string;
     type?: string;
     gte?: number;

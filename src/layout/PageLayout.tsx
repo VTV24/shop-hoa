@@ -17,8 +17,10 @@ type IPageLayoutContext = {
     setCurrentRouter: Dispatch<SetStateAction<IRouter>>;
     loading: boolean;
     currentRouter: IRouter;
-    search: string;
-    setSearch: Dispatch<SetStateAction<string>>;
+    search: {
+        value: string;
+    };
+    setSearch: (value: string) => void;
 };
 
 // @ts-ignore
@@ -32,18 +34,33 @@ const PageLayout: FC = ({ children }) => {
 
     const [currentRouter, setCurrentRouter] = useState<IRouter>(routers[0]);
     const [loadingTop, setLoadingTop] = useState(false);
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState({
+        value: '',
+    });
 
     useEffect(() => {
-        console.log(router.pathname);
-
         setCurrentRouter(routers.find((r) => r.path == router.pathname) || routers[0]);
         window.scrollTo(0, 0);
     }, [router.pathname]);
 
     useEffect(() => {
-        console.log(currentRouter);
+        if (currentRouter.path != '/hoa') {
+            setSearch({
+                value: '',
+            });
+        }
     }, [currentRouter]);
+
+    useEffect(() => {
+        if (search.value != '') {
+            router.push({
+                pathname: '/hoa',
+                query: {
+                    search: search.value,
+                },
+            });
+        }
+    }, [search]);
 
     if (loading)
         return (
@@ -80,7 +97,11 @@ const PageLayout: FC = ({ children }) => {
                 currentRouter,
                 setCurrentRouter,
                 search,
-                setSearch,
+                setSearch: (value: string) => {
+                    setSearch({
+                        value: value,
+                    });
+                },
             }}
         >
             <Head>

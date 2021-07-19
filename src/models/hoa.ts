@@ -19,5 +19,5 @@ if (process.env.NODE_ENV === 'development') {
 
 const Hoa = model<IHoa>('hoas', hoaSchema);
 
-Hoa.createIndexes();
+// Hoa.createIndexes();
 export default Hoa;

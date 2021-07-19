@@ -14,8 +14,6 @@ const Home: NextPage = () => {
     const [loais, setLoais] = useState<ILoai[]>([]);
     const router = useRouter();
 
-    const { search } = useLayoutContext();
-
     const { setLoading } = useLayoutContext();
     const toast = useToastContext();
 
@@ -23,21 +21,10 @@ const Home: NextPage = () => {
         load();
     }, []);
 
-    useEffect(() => {
-        if (search && search != '') {
-            router.push({
-                pathname: '/hoa',
-                query: {
-                    search: search,
-                },
-            });
-        }
-    }, [search]);
-
     const load = async () => {
         try {
             setLoading(true);
-            const [loai, hoa] = await Promise.all([loaiApi.get(), hoaApi.get()]);
+            const [loai, hoa] = await Promise.all([loaiApi.get(), hoaApi.get({ dsc: 'true', sort: 'count' })]);
             setLoais(loai.data.data || []);
             setHoas(hoa.data.data || []);
         } catch (err) {

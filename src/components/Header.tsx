@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useRef } from 'react';
+import React, { FC, Fragment, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Logo from '~public/images/flower.png';
 import { Button } from '@chakra-ui/button';
@@ -9,9 +9,18 @@ import { useLayoutContext } from '~src/layout/PageLayout';
 import { useCartContext } from '~src/providers/cartProvider';
 const Header: FC = () => {
     const [session] = useSession();
-    const { search, setSearch } = useLayoutContext();
+    const {
+        search: { value: search },
+        setSearch,
+    } = useLayoutContext();
     const searchRef = useRef<HTMLInputElement>(null);
     const { carts } = useCartContext();
+
+    useEffect(() => {
+        if (searchRef.current) {
+            searchRef.current.value = search;
+        }
+    }, [search]);
 
     return (
         <header className="flex items-center w-full h-14 fixed top-0 left-0 bg-white shadow px-16 py-2 z-10">
